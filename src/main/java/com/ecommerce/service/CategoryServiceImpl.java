@@ -9,7 +9,10 @@ import com.ecommerce.repository.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,11 +31,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
+    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         log.debug("Fetching all categories");
 
-        
-        List<Category> categories = categoryRepository.findAll();
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
+
+        List<Category> categories = categoryPage.getContent();
         if (categories.isEmpty()) {
             log.warn("No categories found");
             throw new APIException("There are no categories");
@@ -41,7 +49,14 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryDTO> categoryDTOS = categories.stream()
                 .map(category -> modelMapper.map(category, CategoryDTO.class))
                 .toList();
-        return new CategoryResponse(categoryDTOS);
+        return new CategoryResponse(
+                categoryDTOS,
+                categoryPage.getNumber(),
+                categoryPage.getSize(),
+                categoryPage.getTotalElements(),
+                categoryPage.getTotalPages(),
+                categoryPage.isLast()
+        );
     }
 
     @Override
@@ -86,7 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
                 });
 
         category.setCategoryId(categoryId);
-        log.debug("Updated category with [{}] Id", categoryId);
+        log.debug("Updated category with [{}] Id updated", categoryId);
         return modelMapper.map(categoryRepository.save(category), CategoryDTO.class);
     }
 }
