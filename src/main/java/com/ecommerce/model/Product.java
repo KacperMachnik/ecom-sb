@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "products")
 @Data
 @ToString(exclude = "category")
@@ -31,5 +34,9 @@ public class Product {
     @JoinColumn(name = "category_id")
     @JsonBackReference
     private Category category;
+
+
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private List<CartItem> products = new ArrayList<>();
 
 }

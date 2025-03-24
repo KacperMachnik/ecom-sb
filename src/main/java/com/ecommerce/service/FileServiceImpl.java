@@ -1,5 +1,6 @@
 package com.ecommerce.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,9 +11,11 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class FileServiceImpl implements FileService {
     @Override
     public String uploadImage(String path, MultipartFile file) throws IOException {
+        log.debug("Uploading image to path {}", path);
         String originalFilename = file.getOriginalFilename();
         String randomId = UUID.randomUUID().toString();
         String fileName = randomId.concat(originalFilename.substring(originalFilename.lastIndexOf(".")));

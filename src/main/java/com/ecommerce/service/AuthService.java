@@ -10,7 +10,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 
 public interface AuthService {
-    LoginResponse authenticateUser(LoginDTO loginDTO);
+    LoginResponse login(LoginDTO loginDTO);
 
     ResponseCookie generateCookie(UserDetailsImpl userDetails);
 

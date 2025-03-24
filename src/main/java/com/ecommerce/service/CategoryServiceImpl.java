@@ -88,14 +88,14 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = modelMapper.map(categoryDTO, Category.class);
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> {
-                    log.warn("Category with Id [{}] not found", categoryId);
+                    log.debug("Category with Id [{}] not found", categoryId);
                     return new ResourceNotFoundException("Category", "categoryId", categoryId);
                 });
 
         categoryRepository.findByCategoryName(category.getCategoryName())
                 .ifPresent(foundCategory -> {
                     if (!foundCategory.getCategoryId().equals(categoryId)) {
-                        log.warn("Category with name [{}] already exists", category.getCategoryName());
+                        log.debug("Category with name [{}] already exists", category.getCategoryName());
                         throw new APIException(String.format("Category with name %s already exists", category.getCategoryName()));
                     }
                 });

@@ -28,32 +28,41 @@ public class AuthController {
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginDTO) {
-        LoginResponse response = authService.authenticateUser(loginDTO);
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
+        log.debug("Received request to login");
+        LoginResponse response = authService.login(loginDTO);
         ResponseCookie responseCookie = authService.generateCookie(response.getUserDetails());
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, responseCookie.toString()).body(response);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .body(response);
     }
 
     @PostMapping("/signUp")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpDTO signUpDTO) {
+        log.info("Received request to register user");
         authService.registerUser(signUpDTO);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
     @GetMapping("/username")
     public String currentUserName(Authentication authentication) {
+        log.debug("Received request to get current user name");
         return authentication.getName();
     }
 
     @GetMapping("/user")
     public ResponseEntity<LoginResponse> getUserDetails(Authentication authentication) {
+        log.debug("Received request to get user details");
         LoginResponse response = authService.getUserDetails(authentication);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("signOut")
     public ResponseEntity<?> signOutUser() {
+        log.debug("Received request to sign out");
         ResponseCookie cookie = authService.getCleanJwtCookie();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("You've been signed out!"));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new MessageResponse("You've been signed out!"));
     }
 }

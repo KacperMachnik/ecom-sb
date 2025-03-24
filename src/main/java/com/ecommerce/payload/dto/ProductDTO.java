@@ -22,14 +22,14 @@ public class ProductDTO {
     private Integer quantity;
 
     @Positive(message = "Price must be positive")
-    private double price;
+    private Double price;
 
     @Min(value = 0, message = "Discount cannot be less than 0")
     @Max(value = 100, message = "Discount cannot be more than 100")
-    private double discount;
+    private Double discount;
 
     @Positive(message = "Special price must be positive")
-    private double specialPrice;
+    private Double specialPrice;
 
     public void setProductName(String categoryName) {
         this.productName = categoryName != null ? categoryName.trim() : null;

@@ -13,8 +13,8 @@ import java.util.Set;
 
 @Entity(name = "users")
 @Data
-@ToString(exclude = {"roles", "products", "addresses"})
-@EqualsAndHashCode(exclude = {"roles", "products", "addresses"})
+@ToString(exclude = {"roles", "products", "addresses", "cart"})
+@EqualsAndHashCode(exclude = {"roles", "products", "addresses", "cart"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(uniqueConstraints = {
@@ -48,4 +48,7 @@ public class User {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_address", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "address_id"))
     private List<Address> addresses = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private Cart cart;
 }

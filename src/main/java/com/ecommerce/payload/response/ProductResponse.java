@@ -17,8 +17,4 @@ public class ProductResponse {
     private Long totalElements;
     private Integer totalPages;
     private Boolean lastPage;
-
-    public ProductResponse(List<ProductDTO> content) {
-        this.content = content;
-    }
 }

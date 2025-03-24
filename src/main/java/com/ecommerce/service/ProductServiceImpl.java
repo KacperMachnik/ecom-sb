@@ -3,10 +3,13 @@ package com.ecommerce.service;
 
 import com.ecommerce.exceptions.APIException;
 import com.ecommerce.exceptions.ResourceNotFoundException;
+import com.ecommerce.model.Cart;
 import com.ecommerce.model.Category;
 import com.ecommerce.model.Product;
+import com.ecommerce.payload.dto.CartDTO;
 import com.ecommerce.payload.dto.ProductDTO;
 import com.ecommerce.payload.response.ProductResponse;
+import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.CategoryRepository;
 import com.ecommerce.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,15 +33,19 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final FileService fileService;
     private final ModelMapper modelMapper;
+    private final CartRepository cartRepository;
+    private final CartService cartService;
     @Value("${project.image}")
     private String path;
 
     @Autowired
-    public ProductServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository, ModelMapper modelMapper, FileService fileService) {
+    public ProductServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository, ModelMapper modelMapper, FileService fileService, CartRepository cartRepository, CartService cartService) {
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.fileService = fileService;
+        this.cartRepository = cartRepository;
+        this.cartService = cartService;
     }
 
     @Override
@@ -158,6 +165,17 @@ public class ProductServiceImpl implements ProductService {
         double specialPrice = product.getPrice() - ((product.getDiscount() / 100 * product.getPrice()));
         product.setSpecialPrice(specialPrice);
         log.debug("Product category with [{}] Id updated", productId);
+
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+        List<CartDTO> cartDTOS = carts.stream().map(cart -> {
+            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+            List<ProductDTO> productDTOS = cart.getCartItems().stream()
+                    .map(p -> modelMapper.map(p, ProductDTO.class)).toList();
+            cartDTO.setProducts(productDTOS);
+            return cartDTO;
+        }).toList();
+        cartDTOS.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), productId));
+
         return modelMapper.map(productRepository.save(product), ProductDTO.class);
     }
 
@@ -165,11 +183,14 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO deleteProduct(Long productId) {
         log.debug("Deleting product");
         Product product = productRepository.findById(productId).orElseThrow(() -> {
-            log.warn("Product with Id [{}] not found", productId);
+            log.debug("Product with Id [{}] not found", productId);
             return new ResourceNotFoundException("Product", "productId", productId);
         });
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
         productRepository.deleteById(productId);
         log.debug("Deleted product with [{}] Id", productId);
+
         return modelMapper.map(product, ProductDTO.class);
     }
 
@@ -177,7 +198,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
         log.debug("Updating product image");
         Product product = productRepository.findById(productId).orElseThrow(() -> {
-            log.warn("Product with Id [{}] not found", productId);
+            log.debug("Product with Id [{}] not found", productId);
             return new ResourceNotFoundException("Product", "productId", productId);
         });
         String fileName = fileService.uploadImage(path, image);
