@@ -1,8 +1,8 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.config.AppConstants;
-import com.ecommerce.payload.ProductDTO;
-import com.ecommerce.payload.ProductResponse;
+import com.ecommerce.payload.dto.ProductDTO;
+import com.ecommerce.payload.response.ProductResponse;
 import com.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

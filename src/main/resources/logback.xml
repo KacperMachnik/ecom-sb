@@ -28,11 +28,11 @@
         </encoder>
     </appender>
 
-<!--    <root level="info">-->
-<!--        <appender-ref ref="CONSOLE"/>-->
-<!--    </root>-->
+    <!--    <root level="info">-->
+    <!--        <appender-ref ref="CONSOLE"/>-->
+    <!--    </root>-->
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="FILE-ROLLING"/>
     </root>
 </configuration>

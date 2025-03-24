@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
     private String productName;
     private String image;
@@ -23,6 +23,9 @@ public class Product {
     private double discount;
     private double specialPrice;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

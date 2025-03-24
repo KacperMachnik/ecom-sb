@@ -2,15 +2,14 @@ package com.ecommerce.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "categories")
 @Data
-@ToString(exclude = "products")
+@ToString(exclude = {"products"})
 @EqualsAndHashCode(exclude = "products")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,5 +22,5 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 }

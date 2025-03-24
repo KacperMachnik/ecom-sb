@@ -1,8 +1,8 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.config.AppConstants;
-import com.ecommerce.payload.CategoryDTO;
-import com.ecommerce.payload.CategoryResponse;
+import com.ecommerce.payload.dto.CategoryDTO;
+import com.ecommerce.payload.response.CategoryResponse;
 import com.ecommerce.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
