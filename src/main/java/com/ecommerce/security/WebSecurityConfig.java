@@ -133,17 +133,17 @@ public class WebSecurityConfig {
 
             // Create users if not already present
             if (!userRepository.existsByUserName("user1")) {
-                User user1 = new User("user1", "user1@example.com", passwordEncoder.encode("password1"));
+                User user1 = new User("user1", "user1@example.com", passwordEncoder.encode("user1"));
                 userRepository.save(user1);
             }
 
             if (!userRepository.existsByUserName("seller1")) {
-                User seller1 = new User("seller1", "seller1@example.com", passwordEncoder.encode("password2"));
+                User seller1 = new User("seller1", "seller1@example.com", passwordEncoder.encode("seller1"));
                 userRepository.save(seller1);
             }
 
-            if (!userRepository.existsByUserName("admin")) {
-                User admin = new User("admin", "admin@example.com", passwordEncoder.encode("adminPass"));
+            if (!userRepository.existsByUserName("admin1")) {
+                User admin = new User("admin1", "admin1@example.com", passwordEncoder.encode("admin1"));
                 userRepository.save(admin);
             }
 
@@ -158,7 +158,7 @@ public class WebSecurityConfig {
                 userRepository.save(seller);
             });
 
-            userRepository.findByUserName("admin").ifPresent(admin -> {
+            userRepository.findByUserName("admin1").ifPresent(admin -> {
                 admin.setRoles(adminRoles);
                 userRepository.save(admin);
             });

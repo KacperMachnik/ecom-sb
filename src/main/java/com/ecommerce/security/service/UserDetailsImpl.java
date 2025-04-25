@@ -27,6 +27,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private String email;
 
+    @JsonIgnore
     private Collection<? extends GrantedAuthority> authorities;
 
     public static UserDetailsImpl build(User user) {
